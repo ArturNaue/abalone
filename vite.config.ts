@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite'; // <--- Neu importieren
 
 export default defineConfig({
+  base: '/apps/Abalone/',
   plugins: [
     react(),
     tailwindcss(), // <--- Hier als Plugin einfügen
