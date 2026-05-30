@@ -15,7 +15,7 @@ interface PlayerOverlayProps {
   winner: PlayerColor | null;
   onRename: (name: string) => void;
   corner: Corner;
-  rotate?: boolean;
+  flipped?: boolean;
 }
 
 const CORNER_STYLE: Record<Corner, React.CSSProperties> = {
@@ -25,7 +25,7 @@ const CORNER_STYLE: Record<Corner, React.CSSProperties> = {
   'bottom-right': { bottom: '12px', right: '12px' },
 };
 
-const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, winner, onRename, corner, rotate = false }) => {
+const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, winner, onRename, corner, flipped = false }) => {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(player.name);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -46,16 +46,15 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, 
 
   return (
     <div
+      className="player-card"
       style={{
         position: 'absolute',
         ...CORNER_STYLE[corner],
-        transform: rotate ? 'rotate(180deg)' : undefined,
+        transform: flipped ? 'rotate(180deg)' : undefined,
         transformOrigin: 'center',
         background: isActive && !winner ? 'rgba(120, 53, 15, 0.35)' : 'rgba(17, 24, 39, 0.85)',
         border: isActive && !winner ? '1px solid rgb(245, 158, 11)' : '1px solid rgb(31, 41, 55)',
         borderRadius: '10px',
-        padding: '6px 10px',
-        minWidth: '80px',
         backdropFilter: 'blur(4px)',
         transition: 'border-color 0.15s, background 0.15s',
       }}
@@ -199,7 +198,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         isActive={currentPlayer === 'BLACK'}
         winner={winner}
         corner="top-left"
-        rotate
+        flipped
         onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'BLACK', name })}
       />
       {/* Top-right: White, rotated 180° */}
@@ -209,7 +208,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         isActive={currentPlayer === 'WHITE'}
         winner={winner}
         corner="top-right"
-        rotate
+        flipped
         onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'WHITE', name })}
       />
       {/* Bottom-left: Black, normal */}
@@ -228,7 +227,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         isActive={currentPlayer === 'WHITE'}
         winner={winner}
         corner="bottom-right"
-        rotate
+        flipped
         onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'WHITE', name })}
       />
 

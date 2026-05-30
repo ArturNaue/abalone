@@ -107,14 +107,23 @@
   .hover\:text-gray-200:hover { color: rgb(229 231 235); }
 
   /* Responsive player card */
-  .player-card-name { font-size: 15px; }
+  .player-card-name  { font-size: 15px; }
   .player-card-score { font-size: 24px; font-weight: 700; color: white; line-height: 1.1; text-align: center; }
   .status-bar { left: 170px; right: 170px; }
+  .player-card { min-width: 80px; padding: 6px 10px; }
 
   @media (max-width: 520px) {
-    .player-card-name  { font-size: 11px; }
-    .player-card-score { font-size: 17px; }
-    .status-bar        { left: 105px; right: 105px; font-size: 11px; }
+    .player-card-name  { font-size: 12px; }
+    .player-card-score { font-size: 18px; }
+    .status-bar        { left: 112px; right: 112px; font-size: 11px; }
+    .player-card       { min-width: 64px; padding: 4px 8px; }
+  }
+
+  @media (max-width: 390px) {
+    .player-card-name  { font-size: 10px; }
+    .player-card-score { font-size: 15px; }
+    .status-bar        { left: 94px; right: 94px; font-size: 10px; }
+    .player-card       { min-width: 54px; padding: 3px 6px; }
   }
 
   /* animate-pulse */
