@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Exo 2', sans-serif;
+  }
+}
+
+/* Force utility generation by listing critical classes */
+@layer utilities {
+  .bg-gray-950 { background-color: rgb(3 7 18); }
+  .bg-gray-900 { background-color: rgb(17 24 39); }
+  .bg-gray-800 { background-color: rgb(31 41 55); }
+  .bg-gray-700 { background-color: rgb(55 65 81); }
+  .bg-amber-950\/30 { background-color: rgb(69 26 3 / 0.3); }
+  .border-gray-800 { border-color: rgb(31 41 55); }
+  .border-gray-700 { border-color: rgb(55 65 81); }
+  .border-amber-500 { border-color: rgb(245 158 11); }
+  .text-white { color: rgb(255 255 255); }
+  .text-gray-400 { color: rgb(156 163 175); }
+  .text-gray-300 { color: rgb(209 213 219); }
+  .text-gray-500 { color: rgb(107 114 128); }
+  .text-amber-400 { color: rgb(251 191 36); }
+  .min-h-screen { min-height: 100vh; }
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-center { justify-content: center; }
+  .gap-2 { gap: 0.5rem; }
+  .gap-8 { gap: 2rem; }
+  .p-4 { padding: 1rem; }
+  .p-6 { padding: 1.5rem; }
+  .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+  .px-4 { padding-left: 1rem; padding-right: 1rem; }
+  .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+  .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+  .mb-4 { margin-bottom: 1rem; }
+  .mb-0\.5 { margin-bottom: 0.125rem; }
+  .mt-1 { margin-top: 0.25rem; }
+  .mt-3 { margin-top: 0.75rem; }
+  .mt-4 { margin-top: 1rem; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+  .w-4 { width: 1rem; }
+  .h-4 { height: 1rem; }
+  .w-full { width: 100%; }
+  .h-full { height: 100%; }
+  .max-w-2xl { max-width: 42rem; }
+  .aspect-square { aspect-ratio: 1 / 1; }
+  .rounded-full { border-radius: 9999px; }
+  .rounded-lg { border-radius: 0.5rem; }
+  .rounded-xl { border-radius: 0.75rem; }
+  .rounded-2xl { border-radius: 1rem; }
+  .border { border-width: 1px; }
+  .border-2 { border-width: 2px; }
+  .text-xs { font-size: 0.75rem; line-height: 1rem; }
+  .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+  .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+  .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+  .font-bold { font-weight: 700; }
+  .font-medium { font-weight: 500; }
+  .tracking-wide { letter-spacing: 0.025em; }
+  .tracking-wider { letter-spacing: 0.05em; }
+  .uppercase { text-transform: uppercase; }
+  .text-center { text-align: center; }
+  .select-none { user-select: none; }
+  .shadow-2xl { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); }
+  .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4,0,0.2,1); transition-duration: 150ms; }
+  .transition-colors { transition-property: color, background-color, border-color; transition-timing-function: cubic-bezier(0.4,0,0.2,1); transition-duration: 150ms; }
+  .duration-150 { transition-duration: 150ms; }
+  .cursor-pointer { cursor: pointer; }
+  .cursor-not-allowed { cursor: not-allowed; }
+  .opacity-30 { opacity: 0.3; }
+  .disabled\:opacity-30:disabled { opacity: 0.3; }
+  .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+  .hover\:bg-gray-700:hover { background-color: rgb(55 65 81); }
+  .hover\:fill-gray-700:hover { fill: rgb(55 65 81); }
+
+  /* SVG fill / stroke utilities */
+  .fill-gray-800 { fill: rgb(31 41 55); }
+  .fill-gray-700 { fill: rgb(55 65 81); }
+  .fill-zinc-900 { fill: rgb(24 24 27); }
+  .fill-zinc-800 { fill: rgb(39 39 42); }
+  .fill-zinc-100 { fill: rgb(244 244 245); }
+  .fill-amber-900\/40 { fill: rgb(120 53 15 / 0.4); }
+  .fill-amber-500\/70 { fill: rgb(245 158 11 / 0.7); }
+  .stroke-gray-700 { stroke: rgb(55 65 81); }
+  .stroke-zinc-600 { stroke: rgb(82 82 91); }
+  .stroke-zinc-300 { stroke: rgb(212 212 216); }
+  .stroke-amber-400 { stroke: rgb(251 191 36); }
+  .stroke-amber-500 { stroke: rgb(245 158 11); }
+  .stroke-1 { stroke-width: 1; }
+  .stroke-2 { stroke-width: 2; }
+  .stroke-\[2px\] { stroke-width: 2px; }
+
+  /* Background for WHITE marble indicator */
+  .bg-zinc-800 { background-color: rgb(39 39 42); }
+  .bg-zinc-100 { background-color: rgb(244 244 245); }
+  .border-zinc-600 { border-color: rgb(82 82 91); }
+  .border-zinc-300 { border-color: rgb(212 212 216); }
+
+  /* Name input / editing */
+  .min-w-\[90px\] { min-width: 90px; }
+  .w-full { width: 100%; }
+  .outline-none { outline: none; }
+  .cursor-pointer { cursor: pointer; }
+  .hover\:text-gray-200:hover { color: rgb(229 231 235); }
+
+  /* animate-pulse */
+  @keyframes pulse { 50% { opacity: 0.5; } }
+  .animate-pulse { animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; }
+}
