@@ -220,14 +220,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         corner="bottom-left"
         onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'BLACK', name })}
       />
-      {/* Bottom-right: White, rotated 180° */}
+      {/* Bottom-right: White, normal */}
       <PlayerOverlay
         player={players.WHITE}
         score={scores.WHITE}
         isActive={currentPlayer === 'WHITE'}
         winner={winner}
         corner="bottom-right"
-        flipped
         onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'WHITE', name })}
       />
 
