@@ -78,7 +78,7 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, 
             onBlur={commit}
             onKeyDown={e => { if (e.key === 'Enter') commit(); if (e.key === 'Escape') setEditing(false); }}
             style={{
-              flex: 1, fontSize: '15px',
+              flex: 1,
               background: 'rgb(31, 41, 55)',
               border: '1px solid rgb(75, 85, 99)',
               borderRadius: '4px',
@@ -87,6 +87,7 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, 
               outline: 'none',
               minWidth: 0,
             }}
+            className="player-card-name"
             maxLength={16}
             autoFocus
           />
@@ -94,17 +95,14 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, 
           <button
             onClick={startEdit}
             title="Namen bearbeiten"
-            style={{
-              fontSize: '15px', color: 'rgb(156, 163, 175)',
-              background: 'none', border: 'none', cursor: 'pointer',
-              padding: 0, textAlign: 'left', whiteSpace: 'nowrap',
-            }}
+            className="player-card-name"
+            style={{ color: 'rgb(156, 163, 175)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left', whiteSpace: 'nowrap' }}
           >
             {player.name} ✎
           </button>
         )}
       </div>
-      <div style={{ fontSize: '24px', fontWeight: 700, color: 'white', lineHeight: 1.1, textAlign: 'center' }}>{score}</div>
+      <div className="player-card-score">{score}</div>
     </div>
   );
 };
@@ -240,14 +238,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         style={{
           position: 'absolute',
           top: '12px',
-          left: '170px',
-          right: '170px',
           transform: 'rotate(180deg)',
           cursor: selectedHexes.length > 0 && !winner ? 'pointer' : 'default',
           borderColor: currentPlayer === 'WHITE' && !winner ? 'rgb(245,158,11)' : undefined,
           background: currentPlayer === 'WHITE' && !winner ? 'rgba(120,53,15,0.35)' : undefined,
         }}
-        className="px-4 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
+        className="status-bar px-4 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
       >
         {statusText}
       </button>
@@ -354,13 +350,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         style={{
           position: 'absolute',
           bottom: '12px',
-          left: '170px',
-          right: '170px',
           cursor: selectedHexes.length > 0 && !winner ? 'pointer' : 'default',
           borderColor: currentPlayer === 'BLACK' && !winner ? 'rgb(245,158,11)' : undefined,
           background: currentPlayer === 'BLACK' && !winner ? 'rgba(120,53,15,0.35)' : undefined,
         }}
-        className="px-4 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
+        className="status-bar px-4 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
       >
         {statusText}
       </button>

@@ -106,6 +106,17 @@
   .cursor-pointer { cursor: pointer; }
   .hover\:text-gray-200:hover { color: rgb(229 231 235); }
 
+  /* Responsive player card */
+  .player-card-name { font-size: 15px; }
+  .player-card-score { font-size: 24px; font-weight: 700; color: white; line-height: 1.1; text-align: center; }
+  .status-bar { left: 170px; right: 170px; }
+
+  @media (max-width: 520px) {
+    .player-card-name  { font-size: 11px; }
+    .player-card-score { font-size: 17px; }
+    .status-bar        { left: 105px; right: 105px; font-size: 11px; }
+  }
+
   /* animate-pulse */
   @keyframes pulse { 50% { opacity: 0.5; } }
   .animate-pulse { animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; }
