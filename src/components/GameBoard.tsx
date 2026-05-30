@@ -14,18 +14,10 @@ interface PlayerOverlayProps {
   isActive: boolean;
   winner: PlayerColor | null;
   onRename: (name: string) => void;
-  corner: Corner;
   flipped?: boolean;
 }
 
-const CORNER_STYLE: Record<Corner, React.CSSProperties> = {
-  'top-left':     { top: '12px', left: '12px'  },
-  'top-right':    { top: '12px', right: '12px' },
-  'bottom-left':  { bottom: '12px', left: '12px'  },
-  'bottom-right': { bottom: '12px', right: '12px' },
-};
-
-const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, winner, onRename, corner, flipped = false }) => {
+const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, winner, onRename, flipped = false }) => {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(player.name);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,15 +40,13 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, 
     <div
       className="player-card"
       style={{
-        position: 'absolute',
-        ...CORNER_STYLE[corner],
         transform: flipped ? 'rotate(180deg)' : undefined,
-        transformOrigin: 'center',
         background: isActive && !winner ? 'rgba(120, 53, 15, 0.35)' : 'rgba(17, 24, 39, 0.85)',
         border: isActive && !winner ? '1px solid rgb(245, 158, 11)' : '1px solid rgb(31, 41, 55)',
         borderRadius: '10px',
         backdropFilter: 'blur(4px)',
         transition: 'border-color 0.15s, background 0.15s',
+        flexShrink: 0,
       }}
     >
       {/* Marble + Name row */}
@@ -191,60 +181,29 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       style={{ position: 'relative', background: 'rgb(55, 65, 85)', paddingTop: '52px', paddingBottom: '52px', paddingLeft: '16px', paddingRight: '16px' }}
       className="w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col items-center border border-gray-600"
     >
-      {/* Top-left: Black, rotated 180° */}
-      <PlayerOverlay
-        player={players.BLACK}
-        score={scores.BLACK}
-        isActive={currentPlayer === 'BLACK'}
-        winner={winner}
-        corner="top-left"
-        flipped
-        onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'BLACK', name })}
-      />
-      {/* Top-right: White, rotated 180° */}
-      <PlayerOverlay
-        player={players.WHITE}
-        score={scores.WHITE}
-        isActive={currentPlayer === 'WHITE'}
-        winner={winner}
-        corner="top-right"
-        flipped
-        onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'WHITE', name })}
-      />
-      {/* Bottom-left: Black, normal */}
-      <PlayerOverlay
-        player={players.BLACK}
-        score={scores.BLACK}
-        isActive={currentPlayer === 'BLACK'}
-        winner={winner}
-        corner="bottom-left"
-        onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'BLACK', name })}
-      />
-      {/* Bottom-right: White, normal */}
-      <PlayerOverlay
-        player={players.WHITE}
-        score={scores.WHITE}
-        isActive={currentPlayer === 'WHITE'}
-        winner={winner}
-        corner="bottom-right"
-        onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'WHITE', name })}
-      />
-
-      {/* Status bar – top, absolutely positioned, rotated 180° */}
-      <button
-        onClick={() => { if (selectedHexes.length > 0) setSelectedHexes([]); }}
-        style={{
-          position: 'absolute',
-          top: '12px',
-          transform: 'rotate(180deg)',
-          cursor: selectedHexes.length > 0 && !winner ? 'pointer' : 'default',
-          borderColor: currentPlayer === 'WHITE' && !winner ? 'rgb(245,158,11)' : undefined,
-          background: currentPlayer === 'WHITE' && !winner ? 'rgba(120,53,15,0.35)' : undefined,
-        }}
-        className="status-bar px-4 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
-      >
-        {statusText}
-      </button>
+      {/* Top row: Black (flipped) | status bar | White (flipped) */}
+      <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+        <PlayerOverlay
+          player={players.BLACK} score={scores.BLACK}
+          isActive={currentPlayer === 'BLACK'} winner={winner} flipped
+          onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'BLACK', name })}
+        />
+        <button
+          onClick={() => { if (selectedHexes.length > 0) setSelectedHexes([]); }}
+          style={{
+            flex: 1, transform: 'rotate(180deg)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+            cursor: selectedHexes.length > 0 && !winner ? 'pointer' : 'default',
+            borderColor: currentPlayer === 'WHITE' && !winner ? 'rgb(245,158,11)' : undefined,
+            background: currentPlayer === 'WHITE' && !winner ? 'rgba(120,53,15,0.35)' : undefined,
+          }}
+          className="px-2 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
+        >{statusText}</button>
+        <PlayerOverlay
+          player={players.WHITE} score={scores.WHITE}
+          isActive={currentPlayer === 'WHITE'} winner={winner} flipped
+          onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'WHITE', name })}
+        />
+      </div>
 
       <svg viewBox="-320 -280 640 560" className="w-full h-full select-none">
         <defs>
@@ -342,20 +301,29 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         })}
       </svg>
 
-      {/* Status bar – bottom, absolutely positioned */}
-      <button
-        onClick={() => { if (selectedHexes.length > 0) setSelectedHexes([]); }}
-        style={{
-          position: 'absolute',
-          bottom: '12px',
-          cursor: selectedHexes.length > 0 && !winner ? 'pointer' : 'default',
-          borderColor: currentPlayer === 'BLACK' && !winner ? 'rgb(245,158,11)' : undefined,
-          background: currentPlayer === 'BLACK' && !winner ? 'rgba(120,53,15,0.35)' : undefined,
-        }}
-        className="status-bar px-4 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
-      >
-        {statusText}
-      </button>
+      {/* Bottom row: Black (normal) | status bar | White (normal) */}
+      <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+        <PlayerOverlay
+          player={players.BLACK} score={scores.BLACK}
+          isActive={currentPlayer === 'BLACK'} winner={winner}
+          onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'BLACK', name })}
+        />
+        <button
+          onClick={() => { if (selectedHexes.length > 0) setSelectedHexes([]); }}
+          style={{
+            flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+            cursor: selectedHexes.length > 0 && !winner ? 'pointer' : 'default',
+            borderColor: currentPlayer === 'BLACK' && !winner ? 'rgb(245,158,11)' : undefined,
+            background: currentPlayer === 'BLACK' && !winner ? 'rgba(120,53,15,0.35)' : undefined,
+          }}
+          className="px-2 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
+        >{statusText}</button>
+        <PlayerOverlay
+          player={players.WHITE} score={scores.WHITE}
+          isActive={currentPlayer === 'WHITE'} winner={winner}
+          onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'WHITE', name })}
+        />
+      </div>
     </div>
   );
 };
