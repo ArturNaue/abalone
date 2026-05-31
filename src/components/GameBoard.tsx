@@ -178,8 +178,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
   return (
     <div
-      style={{ position: 'relative', background: 'rgb(55, 65, 85)', paddingTop: '52px', paddingBottom: '52px', paddingLeft: '16px', paddingRight: '16px' }}
-      className="w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col items-center border border-gray-600"
+      style={{ position: 'relative', background: 'rgb(55, 65, 85)' }}
+      className="board-container w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col items-center border border-gray-600"
     >
       {/* Top row: Black (flipped) | status bar | White (flipped) */}
       <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>

@@ -132,4 +132,9 @@
 
   /* SW update spinner */
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Board container padding: Abstand Statuszeile ↔ Mulden */
+  .board-container { padding-top: 79px; padding-bottom: 79px; padding-left: 16px; padding-right: 16px; }
+  @media (max-width: 520px) { .board-container { padding-top: 60px; padding-bottom: 60px; } }
+  @media (max-width: 390px) { .board-container { padding-top: 55px; padding-bottom: 55px; } }
 }
