@@ -9,6 +9,7 @@ import { GameAction } from '../reducers/gameReducer';
 type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 interface PlayerOverlayProps {
+  id: string;
   player: Player;
   score: number;
   isActive: boolean;
@@ -17,7 +18,7 @@ interface PlayerOverlayProps {
   flipped?: boolean;
 }
 
-const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, winner, onRename, flipped = false }) => {
+const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ id, player, score, isActive, winner, onRename, flipped = false }) => {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(player.name);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,6 +39,7 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, 
 
   return (
     <div
+      id={id}
       className="player-card"
       style={{
         transform: flipped ? 'rotate(180deg)' : undefined,
@@ -50,8 +52,9 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, 
       }}
     >
       {/* Marble + Name row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+      <div id={`${id}-header`} style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
         <div
+          id={`${id}-marble`}
           style={{
             width: '14px', height: '14px', borderRadius: '50%', flexShrink: 0,
             background: isBlack ? 'rgb(39,39,42)' : 'rgb(244,244,245)',
@@ -76,12 +79,14 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, 
               outline: 'none',
               minWidth: 0,
             }}
+            id={`${id}-name-input`}
             className="player-card-name"
             maxLength={16}
             autoFocus
           />
         ) : (
           <button
+            id={`${id}-name-btn`}
             onClick={startEdit}
             title="Namen bearbeiten"
             className="player-card-name"
@@ -91,7 +96,7 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ player, score, isActive, 
           </button>
         )}
       </div>
-      <div className="player-card-score">{score}</div>
+      <div id={`${id}-score`} className="player-card-score">{score}</div>
     </div>
   );
 };
@@ -178,17 +183,20 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
   return (
     <div
+      id="board-container"
       style={{ position: 'relative', background: 'rgb(55, 65, 85)' }}
       className="board-container w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col items-center border border-gray-600"
     >
       {/* Top row: Black (flipped) | status bar | White (flipped) */}
-      <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+      <div id="board-row-top" style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
         <PlayerOverlay
+          id="board-card-black-top"
           player={players.BLACK} score={scores.BLACK}
           isActive={currentPlayer === 'BLACK'} winner={winner} flipped
           onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'BLACK', name })}
         />
         <button
+          id="board-status-top"
           onClick={() => { if (selectedHexes.length > 0) setSelectedHexes([]); }}
           style={{
             flex: 1, transform: 'rotate(180deg)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
@@ -199,13 +207,14 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           className="px-2 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
         >{statusText}</button>
         <PlayerOverlay
+          id="board-card-white-top"
           player={players.WHITE} score={scores.WHITE}
           isActive={currentPlayer === 'WHITE'} winner={winner} flipped
           onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'WHITE', name })}
         />
       </div>
 
-      <svg viewBox="-320 -280 640 560" className="w-full h-full select-none">
+      <svg id="board-svg" viewBox="-320 -280 640 560" className="w-full h-full select-none">
         <defs>
           {/* 3D Black marble */}
           <radialGradient id="marbleBlack" cx="35%" cy="30%" r="60%">
@@ -302,13 +311,15 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       </svg>
 
       {/* Bottom row: Black (normal) | status bar | White (normal) */}
-      <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+      <div id="board-row-bottom" style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
         <PlayerOverlay
+          id="board-card-black-bottom"
           player={players.BLACK} score={scores.BLACK}
           isActive={currentPlayer === 'BLACK'} winner={winner}
           onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'BLACK', name })}
         />
         <button
+          id="board-status-bottom"
           onClick={() => { if (selectedHexes.length > 0) setSelectedHexes([]); }}
           style={{
             flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
@@ -319,6 +330,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           className="px-2 py-1.5 bg-gray-800 text-xs text-gray-400 rounded-lg border border-gray-700 text-center"
         >{statusText}</button>
         <PlayerOverlay
+          id="board-card-white-bottom"
           player={players.WHITE} score={scores.WHITE}
           isActive={currentPlayer === 'WHITE'} winner={winner}
           onRename={name => dispatch({ type: 'SET_PLAYER_NAME', player: 'WHITE', name })}
