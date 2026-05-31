@@ -54,7 +54,21 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4 gap-4">
+    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4 gap-4" style={{ position: 'relative' }}>
+      {/* Attribution – fixed bottom-right */}
+      <a
+        href="https://www.artur.ch"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          position: 'fixed', bottom: '8px', right: '10px',
+          fontSize: '10px', color: 'rgba(156,163,175,0.5)',
+          textDecoration: 'none', letterSpacing: '0.03em',
+          fontFamily: "'Exo 2', sans-serif",
+        }}
+      >
+        A.N. 05/2026
+      </a>
       {/* Flipped controls for top player */}
       {controls(true)}
 
