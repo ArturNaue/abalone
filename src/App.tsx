@@ -1,6 +1,6 @@
-// v1.4.0 | 2026-05-30 MEZ
+// v1.5.0 | 2026-05-31 MEZ
 
-import React, { useReducer } from 'react';
+import React, { useReducer, useState, useEffect } from 'react';
 import { GameBoard } from './components/GameBoard';
 import { gameReducer, makeInitialState } from './reducers/gameReducer';
 import { currentSnapshot } from './types/game';
@@ -11,6 +11,13 @@ const subtitleStyle: React.CSSProperties = { fontFamily: "'Exo 2', sans-serif", 
 function App() {
   const [state, dispatch] = useReducer(gameReducer, undefined, makeInitialState);
   const snap = currentSnapshot(state);
+  const [swUpdating, setSwUpdating] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setSwUpdating(true);
+    window.addEventListener('sw-update-start', handler);
+    return () => window.removeEventListener('sw-update-start', handler);
+  }, []);
 
   const canUndo = state.historyIndex > 0;
   const canRedo = state.historyIndex < state.history.length - 1;
@@ -55,6 +62,39 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4 gap-4" style={{ position: 'relative' }}>
+      {/* Update-Overlay – blockiert das Spiel während SW-Download */}
+      {swUpdating && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(3, 7, 18, 0.88)',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          gap: '20px',
+        }}>
+          {/* Spinner */}
+          <div style={{
+            width: '48px', height: '48px',
+            border: '4px solid rgba(245,158,11,0.2)',
+            borderTopColor: 'rgb(245,158,11)',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite',
+          }} />
+          <p style={{
+            fontFamily: "'Exo 2', sans-serif", fontWeight: 600,
+            fontSize: '16px', color: 'rgb(245,158,11)',
+            letterSpacing: '0.05em',
+          }}>
+            Neue Version wird geladen…
+          </p>
+          <p style={{
+            fontFamily: "'Exo 2', sans-serif", fontWeight: 300,
+            fontSize: '13px', color: 'rgba(156,163,175,0.7)',
+          }}>
+            Die App startet automatisch neu.
+          </p>
+        </div>
+      )}
+
       {/* Attribution – fixed bottom-right */}
       <a
         href="https://www.artur.ch"
