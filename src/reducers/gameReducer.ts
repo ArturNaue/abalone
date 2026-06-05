@@ -1,6 +1,6 @@
 // v1.0.0 | 2026-05-30 MEZ
 
-import { GameState, GameSnapshot, PlayerColor, HexCoord } from '../types/game';
+import { GameMode, GameState, GameSnapshot, PlayerColor, HexCoord, PlayerMap, ScoreMap } from '../types/game';
 import { getInitialBoard } from '../utils/hexGeometry';
 import { Move, executeMove } from '../utils/gameLogic';
 
@@ -9,23 +9,57 @@ export type GameAction =
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'SET_PLAYER_NAME'; player: PlayerColor; name: string }
+  | { type: 'TOGGLE_PLAYER_AI'; player: PlayerColor }
+  | { type: 'START_GAME'; mode: GameMode; players: PlayerMap; activePlayers: PlayerColor[] }
+  | { type: 'SET_GAME_MODE'; mode: GameMode }
   | { type: 'NEW_GAME' };
 
-function makeInitialSnapshot(): GameSnapshot {
+export const DEFAULT_ACTIVE_PLAYERS: Record<GameMode, PlayerColor[]> = {
+  two: ['WHITE', 'BLACK'],
+  three: ['BLUE', 'RED', 'GREEN'],
+};
+
+const INITIAL_PLAYERS: PlayerMap = {
+  BLACK: { name: 'Schwarz', color: 'BLACK', isAi: false },
+  WHITE: { name: 'Weiss', color: 'WHITE', isAi: false },
+  BLUE: { name: 'Blau', color: 'BLUE', isAi: false },
+  RED: { name: 'Rot', color: 'RED', isAi: false },
+  GREEN: { name: 'Grün', color: 'GREEN', isAi: false },
+  YELLOW: { name: 'Gelb', color: 'YELLOW', isAi: false },
+  BROWN: { name: 'Braun', color: 'BROWN', isAi: false },
+  PURPLE: { name: 'Violett', color: 'PURPLE', isAi: false },
+};
+
+function makeInitialScores(): ScoreMap {
+  return { BLACK: 0, WHITE: 0, BLUE: 0, RED: 0, GREEN: 0, YELLOW: 0, BROWN: 0, PURPLE: 0 };
+}
+
+function getNextPlayer(activePlayers: PlayerColor[], currentPlayer: PlayerColor): PlayerColor {
+  const index = activePlayers.indexOf(currentPlayer);
+  return activePlayers[(index + 1) % activePlayers.length];
+}
+
+function getWinner(activePlayers: PlayerColor[], scores: ScoreMap): PlayerColor | null {
+  return activePlayers.find(player => scores[player] >= 6) ?? null;
+}
+
+function makeInitialSnapshot(mode: GameMode, activePlayers: PlayerColor[]): GameSnapshot {
   return {
-    board: getInitialBoard(),
-    currentPlayer: 'WHITE',
-    scores: { BLACK: 0, WHITE: 0 },
+    board: getInitialBoard(mode, activePlayers),
+    currentPlayer: activePlayers[0],
+    scores: makeInitialScores(),
   };
 }
 
-export function makeInitialState(): GameState {
-  const snapshot = makeInitialSnapshot();
+export function makeInitialState(
+  mode: GameMode = 'two',
+  activePlayers: PlayerColor[] = DEFAULT_ACTIVE_PLAYERS[mode]
+): GameState {
+  const snapshot = makeInitialSnapshot(mode, activePlayers);
   return {
-    players: {
-      BLACK: { name: 'Schwarz', color: 'BLACK' },
-      WHITE: { name: 'Weiss', color: 'WHITE' },
-    },
+    mode,
+    activePlayers,
+    players: INITIAL_PLAYERS,
     winner: null,
     history: [snapshot],
     historyIndex: 0,
@@ -53,7 +87,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
       const nextPlayer: PlayerColor = winner
         ? snap.currentPlayer
-        : snap.currentPlayer === 'BLACK' ? 'WHITE' : 'BLACK';
+        : getNextPlayer(state.activePlayers, snap.currentPlayer);
 
       const newSnapshot: GameSnapshot = {
         board: newBoard,
@@ -83,9 +117,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (state.historyIndex >= state.history.length - 1) return state;
       const nextIndex = state.historyIndex + 1;
       const nextSnap = state.history[nextIndex];
-      const scores = nextSnap.scores;
-      const winner: PlayerColor | null =
-        scores.BLACK >= 6 ? 'BLACK' : scores.WHITE >= 6 ? 'WHITE' : null;
+      const winner = getWinner(state.activePlayers, nextSnap.scores);
       return { ...state, winner, historyIndex: nextIndex };
     }
 
@@ -99,8 +131,36 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
+    case 'TOGGLE_PLAYER_AI': {
+      return {
+        ...state,
+        players: {
+          ...state.players,
+          [action.player]: { ...state.players[action.player], isAi: !state.players[action.player].isAi },
+        },
+      };
+    }
+
     case 'NEW_GAME': {
-      return makeInitialState();
+      return {
+        ...makeInitialState(state.mode, state.activePlayers),
+        players: state.players,
+      };
+    }
+
+    case 'START_GAME': {
+      return {
+        ...makeInitialState(action.mode, action.activePlayers),
+        players: action.players,
+      };
+    }
+
+    case 'SET_GAME_MODE': {
+      const activePlayers = DEFAULT_ACTIVE_PLAYERS[action.mode];
+      return {
+        ...makeInitialState(action.mode, activePlayers),
+        players: state.players,
+      };
     }
 
     default:

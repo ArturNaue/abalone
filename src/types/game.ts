@@ -1,10 +1,12 @@
 // v1.1.0 | 2026-05-30 MEZ
 
-export type PlayerColor = 'BLACK' | 'WHITE';
+export type GameMode = 'two' | 'three';
+export type PlayerColor = 'BLACK' | 'WHITE' | 'BLUE' | 'RED' | 'GREEN' | 'YELLOW' | 'BROWN' | 'PURPLE';
 
 export interface Player {
   name: string;
   color: PlayerColor;
+  isAi: boolean;
 }
 
 export interface HexCoord {
@@ -13,15 +15,19 @@ export interface HexCoord {
 }
 
 export type BoardState = Record<string, PlayerColor | null>;
+export type PlayerMap = Record<PlayerColor, Player>;
+export type ScoreMap = Record<PlayerColor, number>;
 
 export interface GameSnapshot {
   board: BoardState;
   currentPlayer: PlayerColor;
-  scores: { BLACK: number; WHITE: number };
+  scores: ScoreMap;
 }
 
 export interface GameState {
-  players: { BLACK: Player; WHITE: Player };
+  mode: GameMode;
+  activePlayers: PlayerColor[];
+  players: PlayerMap;
   winner: PlayerColor | null;
   history: GameSnapshot[];
   historyIndex: number;

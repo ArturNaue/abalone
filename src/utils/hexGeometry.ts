@@ -1,4 +1,4 @@
-import { HexCoord, BoardState } from '../types/game';
+import { HexCoord, BoardState, GameMode, PlayerColor } from '../types/game';
 
 export const HEX_DIRECTIONS = [
   { q: 1, r: 0 },   // Rechts
@@ -31,20 +31,39 @@ export const generateAbaloneBoard = (): HexCoord[] => {
   return coords;
 };
 
-export const getInitialBoard = (): BoardState => {
+export const getInitialBoard = (mode: GameMode = 'two', activePlayers: PlayerColor[]): BoardState => {
   const board: BoardState = {};
   const coords = generateAbaloneBoard();
   coords.forEach(({ q, r }) => { board[toKey(q, r)] = null; });
 
+  if (mode === 'three') {
+    const [bottomPlayer, topLeftPlayer, topRightPlayer] = activePlayers;
+
+    // Spieler 1 (Blau) unten: 11 Kugeln auf der unteren Seite.
+    for (let q = -4; q <= 0; q++) board[toKey(q, 4)] = bottomPlayer;
+    for (let q = -4; q <= 1; q++) board[toKey(q, 3)] = bottomPlayer;
+
+    // Spieler 2 (Rot) links oben: 11 Kugeln auf der oberen linken Seite.
+    for (let q = -4; q <= 0; q++) board[toKey(q, -4 - q)] = topLeftPlayer;
+    for (let q = -4; q <= 1; q++) board[toKey(q, -3 - q)] = topLeftPlayer;
+
+    // Spieler 3 (Grün) rechts oben: 11 Kugeln auf der oberen rechten Seite.
+    for (let r = -4; r <= 0; r++) board[toKey(4, r)] = topRightPlayer;
+    for (let r = -4; r <= 1; r++) board[toKey(3, r)] = topRightPlayer;
+    return board;
+  }
+
+  const [topPlayer, bottomPlayer] = activePlayers;
+
   // WEISS (Oben)
-  for (let q = 0; q <= 4; q++) board[toKey(q, -4)] = 'WHITE';
-  for (let q = -1; q <= 4; q++) board[toKey(q, -3)] = 'WHITE';
-  board[toKey(0, -2)] = 'WHITE'; board[toKey(1, -2)] = 'WHITE'; board[toKey(2, -2)] = 'WHITE';
+  for (let q = 0; q <= 4; q++) board[toKey(q, -4)] = topPlayer;
+  for (let q = -1; q <= 4; q++) board[toKey(q, -3)] = topPlayer;
+  board[toKey(0, -2)] = topPlayer; board[toKey(1, -2)] = topPlayer; board[toKey(2, -2)] = topPlayer;
 
   // SCHWARZ (Unten)
-  for (let q = -4; q <= 0; q++) board[toKey(q, 4)] = 'BLACK';
-  for (let q = -4; q <= 1; q++) board[toKey(q, 3)] = 'BLACK';
-  board[toKey(-2, 2)] = 'BLACK'; board[toKey(-1, 2)] = 'BLACK'; board[toKey(0, 2)] = 'BLACK';
+  for (let q = -4; q <= 0; q++) board[toKey(q, 4)] = bottomPlayer;
+  for (let q = -4; q <= 1; q++) board[toKey(q, 3)] = bottomPlayer;
+  board[toKey(-2, 2)] = bottomPlayer; board[toKey(-1, 2)] = bottomPlayer; board[toKey(0, 2)] = bottomPlayer;
 
   return board;
 };

@@ -9,10 +9,6 @@ export interface Move {
   targetHexes: HexCoord[];
 }
 
-function opponent(player: PlayerColor): PlayerColor {
-  return player === 'BLACK' ? 'WHITE' : 'BLACK';
-}
-
 function add(a: HexCoord, b: HexCoord): HexCoord {
   return { q: a.q + b.q, r: a.r + b.r };
 }
@@ -28,7 +24,6 @@ export function getLegalMoves(
 ): Move[] {
   if (selectedHexes.length === 0) return [];
 
-  const opp = opponent(currentPlayer);
   const moves: Move[] = [];
 
   if (selectedHexes.length === 1) {
@@ -64,11 +59,12 @@ export function getLegalMoves(
 
     if (targetContent === null) {
       moves.push({ type: 'inline', direction: dir, targetHexes: [target] });
-    } else if (targetContent === opp) {
+    } else if (targetContent !== currentPlayer) {
+      const enemy = targetContent;
       // Count enemy chain length
       let enemyCount = 0;
       let cur = target;
-      while (board[toKey(cur.q, cur.r)] === opp) {
+      while (board[toKey(cur.q, cur.r)] === enemy) {
         enemyCount++;
         cur = add(cur, dir);
       }
@@ -103,7 +99,6 @@ export function executeMove(
   currentPlayer: PlayerColor
 ): { newBoard: BoardState; pushedOff: number } {
   const newBoard = { ...board };
-  const opp = opponent(currentPlayer);
   let pushedOff = 0;
 
   const dir = move.direction;
@@ -128,11 +123,12 @@ export function executeMove(
       const dest = add(h, dir);
       newBoard[toKey(dest.q, dest.r)] = currentPlayer;
     });
-  } else if (targetContent === opp) {
+  } else if (targetContent !== currentPlayer) {
+    const enemy = targetContent;
     // Sumito: collect enemy chain
     const enemies: HexCoord[] = [];
     let cur = target;
-    while (board[toKey(cur.q, cur.r)] === opp) {
+    while (board[toKey(cur.q, cur.r)] === enemy) {
       enemies.push(cur);
       cur = add(cur, dir);
     }
@@ -147,13 +143,13 @@ export function executeMove(
       // Enemies shift forward, all survive
       enemies.forEach(e => {
         const dest = add(e, dir);
-        newBoard[toKey(dest.q, dest.r)] = opp;
+        newBoard[toKey(dest.q, dest.r)] = enemy;
       });
     } else {
       // afterContent === undefined: last enemy falls off the board
       enemies.slice(0, -1).forEach(e => {
         const dest = add(e, dir);
-        newBoard[toKey(dest.q, dest.r)] = opp;
+        newBoard[toKey(dest.q, dest.r)] = enemy;
       });
       pushedOff = 1;
     }
